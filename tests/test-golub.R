@@ -1,7 +1,31 @@
 library(supc)
 data("golub", package = "supc")
 if (Sys.getenv("TEST_GOLUB") == "TRUE") {
-  system.time(golub.cpp <- supc1(golub, r = 4, t = "dynamic", implementation = "cpp", verbose = TRUE))
-  system.time(golub.r <- supc1(golub, r = 4, t = "dynamic", implementation = "R", verbose = TRUE))
+  print(system.time(
+    golub.cpp <- supc1(golub, r = 4, t = "dynamic", implementation = "cpp", verbose = TRUE)
+    ))
+  cat("===\n")
+  print(system.time(
+    golub.cpp2 <- supc1(golub, r = 4, t = "dynamic", implementation = "cpp2", verbose = TRUE)
+    ))
+  cat("===\n")
+  print(system.time(
+    golub.r <- supc1(golub, r = 4, t = "dynamic", implementation = "R", verbose = TRUE)
+    ))
+  
+  stopifnot(isTRUE(all.equal(golub.cpp, golub.cpp2)))
   stopifnot(isTRUE(all.equal(golub.cpp, golub.r)))
+  
+  cat("===\n")
+  print(system.time(
+    golub.random.r <- supc.random(golub, r = 4, t = "dynamic", k = 10, implementation = "R", verbose = TRUE)
+  ))
+  print(system.time(
+    golub.random.cpp <- supc.random(golub, r = 4, t = "dynamic", k = 10, implementation = "cpp", verbose = TRUE, groups = golub.random.r$groups)
+  ))
+  check.names.ref <- c("x", "r", "cluster", "centers", "size")
+  stopifnot(isTRUE(all.equal(
+    golub.random.r[check.names.ref],
+    golub.random.cpp[check.names.ref]
+  )))
 }
