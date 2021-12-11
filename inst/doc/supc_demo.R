@@ -14,13 +14,15 @@ abline(v=c(0.51, 0.73, 0.85), lty=2)
 
 
 ## -----------------------------------------------------------------------------
-x.supcs <- supc1(x, r=c(0.40, 0.51, 0.73, 0.85), t = "dynamic")
+x.supcs <- supc1(x, r=c(0.40, 0.51, 0.73, 0.85), t = "dynamic", implementation = "R")
 
 ## ----fig.width=10, fig.height=10----------------------------------------------
-par(mfrow=c(2,2))
-for (i in 1:4)
-plot(x, col=x.supcs$cluster[[i]], main=paste("r=", x.supcs$r[[i]], sep=""))
-
+oldpar <- par(mfrow=c(2,2))
+tryCatch({
+  for (i in 1:4) plot(x, col=x.supcs$cluster[[i]], main=paste("r=", x.supcs$r[[i]], sep=""))
+}, finally = {
+  par(oldpar)
+})
 
 ## ----fig.width=6, fig.height=6------------------------------------------------
 data(D31)
@@ -35,7 +37,7 @@ abline(v=2.25, lty=2)
 
 
 ## -----------------------------------------------------------------------------
-x.supcs <- supc1(x, r =2.25, t = "dynamic")
+x.supcs <- supc1(x, r =2.25, t = "dynamic", implementation = "R")
 table(x.supcs$cluster)
 
 
@@ -53,7 +55,7 @@ x.freq <- freq.poly(x, breaks = 100)
 
 
 ## -----------------------------------------------------------------------------
-x.supcs <- supc1(golub, t="dynamic")
+x.supcs <- supc1(golub, t="dynamic", implementation = "R")
 max(x.supcs[[1]]$cluster)
 table(x.supcs[[1]]$size)
 
